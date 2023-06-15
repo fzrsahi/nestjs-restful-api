@@ -4,7 +4,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as pactum from 'pactum';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AuthDto } from 'src//auth/dto';
-import { EditUserDto } from 'src/user/dto';
+import { EditUserDto } from '../src/user/dto';
+import { BookmarkDto } from '../src/bookmark/dto';
+import { GetUser } from '../src/auth/decorator';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -158,7 +160,7 @@ describe('App e2e', () => {
 
     describe('edit user', () => {
       it('should edit current user login', () => {
-        const dto: EditUserDto = {
+        const dto: any = {
           firstName: 'Vladimir',
           email: 'vlad@codewithvlad.com',
         };
@@ -178,8 +180,36 @@ describe('App e2e', () => {
   });
 
   describe('bookmarks', () => {
-    describe('create bookmark', () => {});
-    describe('get all bookmarks', () => {});
+    describe('Create bookmark', () => {
+      const dto: BookmarkDto = {
+        title: 'First Bookmark',
+        link: 'https://www.youtube.com/watch?v=d6WC5n9G_sM',
+      };
+      it('should create bookmark', () => {
+        return pactum
+          .spec()
+          .post('/bookmark')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(201)
+          .inspect();
+      });
+    });
+
+    describe('get all bookmarks', () => {
+      // it('should get all bookmark', () => {
+      //   return pactum
+      //     .spec()
+      //     .get('/bookmark/')
+      //     .withHeaders({
+      //       Authorization: 'Bearer $S{userAt}',
+      //     })
+      //     .expectStatus(200)
+      //     .inspect();
+      // });
+    });
     describe('get bookmark by id', () => {});
     describe('edit bookmark', () => {});
     describe('delete bookmark', () => {});
